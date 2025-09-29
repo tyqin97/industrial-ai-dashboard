@@ -9,6 +9,11 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    /*
+      Config Module.forRoot:
+        - Reads .env and attaches values to process.env
+        - isGlobal:true means you don't need to import ConfigModule in every module
+    */
     ConfigModule.forRoot({ isGlobal : true }),
     TypeOrmModule.forRoot({
       type : 'postgres',
@@ -17,9 +22,12 @@ import { UsersModule } from './users/users.module';
       username : process.env.DB_USER,
       password : process.env.DB_PASS,
       database : process.env.DB_NAME,
-      autoLoadEntities : true,
+      autoLoadEntities : true,  // Automatically pickup @Entity classes
       synchronize : true, // DEV ONLY
     }),
+    /*
+      Make Modules available to the app
+    */
     UsersModule,
   ],
   controllers: [AppController],

@@ -1,9 +1,10 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import * as bcrypt from 'bcrypt';
 
-@Controller('users')
+@Controller('users')    // Base route = /users
 export class UsersController {
+    // DI: we get an instance of UsersService
     constructor(private readonly users : UsersService) {}
 
     @Post('seed')
@@ -14,7 +15,8 @@ export class UsersController {
     }
 
     @Get('by-email')
-    find(@Query('email') email : string) {
-        return this.users.findByEmail(email);
+    async find(@Query('email') email : string) {
+        const user = await this.users.findByEmail(email);
+        return { id : user.id, email : user.email, role : user.role };
     }
 }
