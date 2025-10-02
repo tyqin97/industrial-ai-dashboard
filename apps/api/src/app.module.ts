@@ -5,7 +5,9 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ProtectedController } from './protected.controller';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,8 +31,9 @@ import { UsersModule } from './users/users.module';
       Make Modules available to the app
     */
     UsersModule,
+    AuthModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProtectedController],
   providers: [AppService],
 })
 export class AppModule {}

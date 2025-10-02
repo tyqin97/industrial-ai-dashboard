@@ -2,6 +2,9 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useAuth } from "@/store/auth";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 
 type FormVals = {
     email : string,
@@ -11,18 +14,23 @@ type FormVals = {
 export default function LoginPage() {
     const { register, handleSubmit, formState : { isSubmitting }} = useForm<FormVals>();
     const setToken = useAuth((s) => s.setToken);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     async function onSubmit(vals : FormVals) {
-        // For now, we’ll fake success so UI works (Day 4 will call real API).
-        // If you want to try the real call later, uncomment below and ensure NestJS auth exists.
-        //
-        // const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, vals);
-        // setToken(res.data.access_token);
+        setError(null);
+        
+        try {
+            const res = await api.post("/auth/login", vals);
+            setToken(res.data.access_token);
 
-        // Temporary Mock:
-        await new Promise(r => setTimeout(r, 400));
-        setToken("dummy-token");
-        alert("Logged in (mock). Go To Dashboard");
+            // Redirect to Dashboard page
+            router.push("/dashboard");
+        }
+        catch (e : any) {
+            const msg = e?.response?.data?.message ?? "Login Failed";
+            setError(Array.isArray(msg) ? msg.join(", ") : msg);
+        }
     }
 
     return (
@@ -45,9 +53,6 @@ export default function LoginPage() {
                     className="w-full bg-slate-900 text-white rounded py-2 disabled:opacity-50">
                     {isSubmitting ? "Signind in..." : "Sign in"}
                 </button>
-                <p className="text-xs text-slate-500">
-                    *Mock Login for now. We ill wire real JWT auth on Day4.
-                </p>
             </form>
         </div>
     )
