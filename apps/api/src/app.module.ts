@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProtectedController } from './protected.controller';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { RealtimeModule } from './realtime/realtime.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AuthModule } from './auth/auth.module';
     */
     UsersModule,
     AuthModule,
+    RealtimeModule,
   ],
   controllers: [AppController, ProtectedController],
   providers: [AppService],
